@@ -79,113 +79,113 @@ endif
 
 
 #Project Targets
-PROJECT_TARGETS = IterativeTemplate/$(MODE_DIR)/IterativeTemplate.out \
-	 IterativeTemplate_partialImage/$(MODE_DIR)/IterativeTemplate_partialImage.o
+PROJECT_TARGETS = FRC2014/$(MODE_DIR)/FRC2014.out \
+	 FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage.o
 
 
 #Rules
 
-# IterativeTemplate
+# FRC2014
 ifeq ($(DEBUG_MODE),1)
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_C-Compiler = -g
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_C++-Compiler = -g
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_Linker = -g
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_Partial-Image-Linker = 
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_Librarian = 
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -g
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_C-Compiler = -g
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_C++-Compiler = -g
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Linker = -g
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Partial-Image-Linker = 
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Librarian = 
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -g
 else
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_C-Compiler = -O2 -fstrength-reduce -fno-builtin
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_C++-Compiler = -O2 -fstrength-reduce -fno-builtin
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_Linker = -O2 -fstrength-reduce -fno-builtin
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_Partial-Image-Linker = 
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_Librarian = 
-IterativeTemplate/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -O2 -fstrength-reduce -fno-builtin
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_C-Compiler = -O2 -fstrength-reduce -fno-builtin
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_C++-Compiler = -O2 -fstrength-reduce -fno-builtin
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Linker = -O2 -fstrength-reduce -fno-builtin
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Partial-Image-Linker = 
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Librarian = 
+FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -O2 -fstrength-reduce -fno-builtin
 endif
-IterativeTemplate/$(MODE_DIR)/% : IDE_INCLUDES = -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/WPILib -I$(WIND_BASE)/target/h/wrn/coreip 
-IterativeTemplate/$(MODE_DIR)/% : IDE_LIBRARIES = $(WIND_BASE)/target/lib/WPILib.a 
-IterativeTemplate/$(MODE_DIR)/% : IDE_DEFINES = 
-IterativeTemplate/$(MODE_DIR)/% : PROJECT_TYPE = DKM
-IterativeTemplate/$(MODE_DIR)/% : DEFINES = 
-IterativeTemplate/$(MODE_DIR)/% : EXPAND_DBG = 0
-IterativeTemplate/$(MODE_DIR)/% : VX_CPU_FAMILY = ppc
-IterativeTemplate/$(MODE_DIR)/% : CPU = PPC603
-IterativeTemplate/$(MODE_DIR)/% : TOOL_FAMILY = gnu
-IterativeTemplate/$(MODE_DIR)/% : TOOL = gnu
-IterativeTemplate/$(MODE_DIR)/% : TOOL_PATH = 
-IterativeTemplate/$(MODE_DIR)/% : CC_ARCH_SPEC = -mcpu=603 -mstrict-align -mno-implicit-fp -mlongcall
-IterativeTemplate/$(MODE_DIR)/% : LIBPATH = 
-IterativeTemplate/$(MODE_DIR)/% : LIBS = 
-IterativeTemplate/$(MODE_DIR)/% : OBJ_DIR := IterativeTemplate/$(MODE_DIR)
+FRC2014/$(MODE_DIR)/% : IDE_INCLUDES = -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/WPILib -I$(WIND_BASE)/target/h/wrn/coreip 
+FRC2014/$(MODE_DIR)/% : IDE_LIBRARIES = $(WIND_BASE)/target/lib/WPILib.a 
+FRC2014/$(MODE_DIR)/% : IDE_DEFINES = 
+FRC2014/$(MODE_DIR)/% : PROJECT_TYPE = DKM
+FRC2014/$(MODE_DIR)/% : DEFINES = 
+FRC2014/$(MODE_DIR)/% : EXPAND_DBG = 0
+FRC2014/$(MODE_DIR)/% : VX_CPU_FAMILY = ppc
+FRC2014/$(MODE_DIR)/% : CPU = PPC603
+FRC2014/$(MODE_DIR)/% : TOOL_FAMILY = gnu
+FRC2014/$(MODE_DIR)/% : TOOL = gnu
+FRC2014/$(MODE_DIR)/% : TOOL_PATH = 
+FRC2014/$(MODE_DIR)/% : CC_ARCH_SPEC = -mcpu=603 -mstrict-align -mno-implicit-fp -mlongcall
+FRC2014/$(MODE_DIR)/% : LIBPATH = 
+FRC2014/$(MODE_DIR)/% : LIBS = 
+FRC2014/$(MODE_DIR)/% : OBJ_DIR := FRC2014/$(MODE_DIR)
 
-OBJECTS_IterativeTemplate = IterativeTemplate_partialImage/$(MODE_DIR)/IterativeTemplate_partialImage.o
+OBJECTS_FRC2014 = FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage.o
 
-IterativeTemplate/$(MODE_DIR)/IterativeTemplate.out : $(OBJECTS_IterativeTemplate)
-	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@";rm -f "$@";nmppc $(OBJECTS_IterativeTemplate) $(IDE_LIBRARIES) | tclsh $(WIND_BASE)/host/resource/hutils/tcl/munch.tcl -c ppc > $(OBJ_DIR)/ctdt.c; $(TOOL_PATH)ccppc $(DEBUGFLAGS_Linker) $(CC_ARCH_SPEC) -fdollars-in-identifiers -Wall $(ADDED_CFLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES)  -o $(OBJ_DIR)/ctdt.o -c $(OBJ_DIR)/ctdt.c; $(TOOL_PATH)ccppc -r -nostdlib -Wl,-X -T $(WIND_BASE)/target/h/tool/gnu/ldscripts/link.OUT -o "$@" $(OBJ_DIR)/ctdt.o $(OBJECTS_IterativeTemplate) $(IDE_LIBRARIES) $(LIBPATH) $(LIBS)  $(ADDED_LIBPATH) $(ADDED_LIBS) && if [ "$(EXPAND_DBG)" = "1" ]; then plink "$@";fi
+FRC2014/$(MODE_DIR)/FRC2014.out : $(OBJECTS_FRC2014)
+	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@";rm -f "$@";nmppc $(OBJECTS_FRC2014) $(IDE_LIBRARIES) | tclsh $(WIND_BASE)/host/resource/hutils/tcl/munch.tcl -c ppc > $(OBJ_DIR)/ctdt.c; $(TOOL_PATH)ccppc $(DEBUGFLAGS_Linker) $(CC_ARCH_SPEC) -fdollars-in-identifiers -Wall $(ADDED_CFLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES)  -o $(OBJ_DIR)/ctdt.o -c $(OBJ_DIR)/ctdt.c; $(TOOL_PATH)ccppc -r -nostdlib -Wl,-X -T $(WIND_BASE)/target/h/tool/gnu/ldscripts/link.OUT -o "$@" $(OBJ_DIR)/ctdt.o $(OBJECTS_FRC2014) $(IDE_LIBRARIES) $(LIBPATH) $(LIBS)  $(ADDED_LIBPATH) $(ADDED_LIBS) && if [ "$(EXPAND_DBG)" = "1" ]; then plink "$@";fi
 
-IterativeTemplate/$(MODE_DIR)/IterativeTemplate_compile_file : $(FILE) ;
+FRC2014/$(MODE_DIR)/FRC2014_compile_file : $(FILE) ;
 
-_clean :: IterativeTemplate/$(MODE_DIR)/IterativeTemplate_clean
+_clean :: FRC2014/$(MODE_DIR)/FRC2014_clean
 
-IterativeTemplate/$(MODE_DIR)/IterativeTemplate_clean : 
-	$(TRACE_FLAG)if [ -d "IterativeTemplate" ]; then cd "IterativeTemplate"; rm -rf $(MODE_DIR); fi
+FRC2014/$(MODE_DIR)/FRC2014_clean : 
+	$(TRACE_FLAG)if [ -d "FRC2014" ]; then cd "FRC2014"; rm -rf $(MODE_DIR); fi
 
 
-# IterativeTemplate_partialImage
+# FRC2014_partialImage
 ifeq ($(DEBUG_MODE),1)
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_C-Compiler = -g
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_C++-Compiler = -g
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Linker = -g
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Partial-Image-Linker = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Librarian = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -g
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_C-Compiler = -g
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_C++-Compiler = -g
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Linker = -g
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Partial-Image-Linker = 
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Librarian = 
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -g
 else
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_C-Compiler = -O2 -fstrength-reduce -fno-builtin
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_C++-Compiler = -O2 -fstrength-reduce -fno-builtin
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Linker = -O2 -fstrength-reduce -fno-builtin
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Partial-Image-Linker = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Librarian = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -O2 -fstrength-reduce -fno-builtin
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_C-Compiler = -O2 -fstrength-reduce -fno-builtin
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_C++-Compiler = -O2 -fstrength-reduce -fno-builtin
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Linker = -O2 -fstrength-reduce -fno-builtin
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Partial-Image-Linker = 
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Librarian = 
+FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -O2 -fstrength-reduce -fno-builtin
 endif
-IterativeTemplate_partialImage/$(MODE_DIR)/% : IDE_INCLUDES = -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/WPILib -I$(WIND_BASE)/target/h/wrn/coreip 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : IDE_LIBRARIES = $(WIND_BASE)/target/lib/WPILib.a 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : IDE_DEFINES = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : PROJECT_TYPE = DKM
-IterativeTemplate_partialImage/$(MODE_DIR)/% : DEFINES = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : EXPAND_DBG = 0
-IterativeTemplate_partialImage/$(MODE_DIR)/% : VX_CPU_FAMILY = ppc
-IterativeTemplate_partialImage/$(MODE_DIR)/% : CPU = PPC603
-IterativeTemplate_partialImage/$(MODE_DIR)/% : TOOL_FAMILY = gnu
-IterativeTemplate_partialImage/$(MODE_DIR)/% : TOOL = gnu
-IterativeTemplate_partialImage/$(MODE_DIR)/% : TOOL_PATH = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : CC_ARCH_SPEC = -mcpu=603 -mstrict-align -mno-implicit-fp -mlongcall
-IterativeTemplate_partialImage/$(MODE_DIR)/% : LIBPATH = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : LIBS = 
-IterativeTemplate_partialImage/$(MODE_DIR)/% : OBJ_DIR := IterativeTemplate_partialImage/$(MODE_DIR)
+FRC2014_partialImage/$(MODE_DIR)/% : IDE_INCLUDES = -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/WPILib -I$(WIND_BASE)/target/h/wrn/coreip 
+FRC2014_partialImage/$(MODE_DIR)/% : IDE_LIBRARIES = $(WIND_BASE)/target/lib/WPILib.a 
+FRC2014_partialImage/$(MODE_DIR)/% : IDE_DEFINES = 
+FRC2014_partialImage/$(MODE_DIR)/% : PROJECT_TYPE = DKM
+FRC2014_partialImage/$(MODE_DIR)/% : DEFINES = 
+FRC2014_partialImage/$(MODE_DIR)/% : EXPAND_DBG = 0
+FRC2014_partialImage/$(MODE_DIR)/% : VX_CPU_FAMILY = ppc
+FRC2014_partialImage/$(MODE_DIR)/% : CPU = PPC603
+FRC2014_partialImage/$(MODE_DIR)/% : TOOL_FAMILY = gnu
+FRC2014_partialImage/$(MODE_DIR)/% : TOOL = gnu
+FRC2014_partialImage/$(MODE_DIR)/% : TOOL_PATH = 
+FRC2014_partialImage/$(MODE_DIR)/% : CC_ARCH_SPEC = -mcpu=603 -mstrict-align -mno-implicit-fp -mlongcall
+FRC2014_partialImage/$(MODE_DIR)/% : LIBPATH = 
+FRC2014_partialImage/$(MODE_DIR)/% : LIBS = 
+FRC2014_partialImage/$(MODE_DIR)/% : OBJ_DIR := FRC2014_partialImage/$(MODE_DIR)
 
-IterativeTemplate_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.o : $(PRJ_ROOT_DIR)/MyRobot.cpp $(FORCE_FILE_BUILD)
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.o : $(PRJ_ROOT_DIR)/MyRobot.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
-IterativeTemplate_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.o : $(PRJ_ROOT_DIR)/Utils/Logger.cpp $(FORCE_FILE_BUILD)
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.o : $(PRJ_ROOT_DIR)/Utils/Logger.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
-OBJECTS_IterativeTemplate_partialImage = IterativeTemplate_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.o \
-	 IterativeTemplate_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.o
+OBJECTS_FRC2014_partialImage = FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.o \
+	 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.o
 
-IterativeTemplate_partialImage/$(MODE_DIR)/IterativeTemplate_partialImage.o : $(OBJECTS_IterativeTemplate_partialImage)
-	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc -r -nostdlib -Wl,-X  -o "$@" $(OBJECTS_IterativeTemplate_partialImage) $(LIBPATH) $(LIBS) $(ADDED_LIBPATH) $(ADDED_LIBS)  && if [ "$(EXPAND_DBG)" = "1" ]; then plink "$@";fi
+FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage.o : $(OBJECTS_FRC2014_partialImage)
+	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc -r -nostdlib -Wl,-X  -o "$@" $(OBJECTS_FRC2014_partialImage) $(LIBPATH) $(LIBS) $(ADDED_LIBPATH) $(ADDED_LIBS)  && if [ "$(EXPAND_DBG)" = "1" ]; then plink "$@";fi
 
-IterativeTemplate_partialImage/$(MODE_DIR)/IterativeTemplate_partialImage_compile_file : $(FILE) ;
+FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage_compile_file : $(FILE) ;
 
-_clean :: IterativeTemplate_partialImage/$(MODE_DIR)/IterativeTemplate_partialImage_clean
+_clean :: FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage_clean
 
-IterativeTemplate_partialImage/$(MODE_DIR)/IterativeTemplate_partialImage_clean : 
-	$(TRACE_FLAG)if [ -d "IterativeTemplate_partialImage" ]; then cd "IterativeTemplate_partialImage"; rm -rf $(MODE_DIR); fi
+FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage_clean : 
+	$(TRACE_FLAG)if [ -d "FRC2014_partialImage" ]; then cd "FRC2014_partialImage"; rm -rf $(MODE_DIR); fi
 
 force : 
 
-DEP_FILES := IterativeTemplate_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.d IterativeTemplate_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.d
+DEP_FILES := FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.d
 -include $(DEP_FILES)
 
 
