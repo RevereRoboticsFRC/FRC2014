@@ -3,144 +3,135 @@
 #include "Utils/Logger.h"
 #include "Drive/Driver.h"
 
-/**
- * This is a demo program showing the use of the RobotBase class.
- * The IterativeRobot class is the base of a robot application that will automatically call your
- * Periodic methods for each packet based on the mode.
- */ 
-class RobotDemo : public IterativeRobot
-{
+#define VERSION "1.0 Parkeet"
+
+class RevereRobot: public IterativeRobot {
+
 	Logger* logger;
 	RobotController* controller;
 	Driver* driver;
+	//	Sanity timer
+	Timer* timer;
 
 public:
-	RobotDemo()
-	{
+	RevereRobot() {
 		logger = new Logger(FINE, "RevereBot");
 		driver = new Driver(1, 2);
 		controller = new RobotController(driver, new Joystick(1));
-		
-		this->SetPeriod(0); 			//Set update period to sync with robot control packets (20ms nominal)
+		timer = new Timer();
+
+		//	Set update period to sync with robot control packets (20ms nominal)
+		SetPeriod(0);
 	}
-	
-/**
- * Robot-wide initialization code should go here.
- * 
- * Use this method for default Robot-wide initialization which will
- * be called when the robot is first powered on.  It will be called exactly 1 time.
- */
-void RobotDemo::RobotInit() {
-	logger->Info("Robot global init.");
-	
-	logger->Info("Done init.");
-}
 
-/**
- * Initialization code for disabled mode should go here.
- * 
- * Use this method for initialization code which will be called each time
- * the robot enters disabled mode. 
- */
-void RobotDemo::DisabledInit() {
-	logger->Info("Disabled mode init.");
-	driver->Stop();
-	driver->SetDisabled(true);
-	driver->SetSafetyEnabled(true);
-}
+	/**
+	 * Robot-wide initialization. This will be called on robot startup and will only be called once.
+	 */
+	void RevereRobot::RobotInit() {
+		logger->Info("Robot global init.");
+		logger->All("Revere FRC 2014");
+		logger->All(VERSION);
 
-/**
- * Periodic code for disabled mode should go here.
- * 
- * Use this method for code which will be called periodically at a regular
- * rate while the robot is in disabled mode.
- */
-void RobotDemo::DisabledPeriodic() {
-	m_watchdog.Feed();
-	
-}
+		logger->Info("Finished global init.");
+	}
 
-/**
- * Initialization code for autonomous mode should go here.
- * 
- * Use this method for initialization code which will be called each time
- * the robot enters autonomous mode.
- */
-void RobotDemo::AutonomousInit() {
-	logger->Info("Auton mode init.");
-	driver->Stop();
-	driver->SetDisabled(false);
-	driver->SetSafetyEnabled(false);
-}
+	/**
+	 * Initialization code for disabled mode
+	 */
+	void RevereRobot::DisabledInit() {
+		logger->Info("Disabled mode init.");
+		driver->Stop();
+		driver->SetDisabled(true);
+		driver->SetSafetyEnabled(true);
+		logger->Info("Finished disabled mode init.");
+	}
 
-/**
- * Periodic code for autonomous mode should go here.
- *
- * Use this method for code which will be called periodically at a regular
- * rate while the robot is in autonomous mode.
- */
-void RobotDemo::AutonomousPeriodic() {
-	m_watchdog.Feed();
-	driver->Drive(0.25, 0.25);
-}
+	/**
+	 * Periodic code for disabled mode.
+	 * Do nothing but feed the doggy.
+	 */
+	void RevereRobot::DisabledPeriodic() {
+		m_watchdog.Feed();
 
-/**
- * Initialization code for teleop mode should go here.
- * 
- * Use this method for initialization code which will be called each time
- * the robot enters teleop mode.
- */
-void RobotDemo::TeleopInit() {
-	logger->Info("Teleop mode init.");
-	driver->Stop();
-	driver->SetDisabled(false);
-	driver->SetSafetyEnabled(true);
-	driver->SetExpiration(0.5);
-}
+	}
 
-/**
- * Periodic code for teleop mode should go here.
- *
- * Use this method for code which will be called periodically at a regular
- * rate while the robot is in teleop mode.
- */
-void RobotDemo::TeleopPeriodic() {
-	m_watchdog.Feed();
-	controller->TeleopTick();
-}
+	/**
+	 * Initialization code for autonomous mode.
+	 */
+	void RevereRobot::AutonomousInit() {
+		logger->Info("Auton mode init.");
+		driver->Stop();
+		driver->SetDisabled(false);
+		driver->SetSafetyEnabled(false);
+		timer->Stop();
+		timer->Reset();
+		timer->Start();
+		logger->Info("Finished auton mode init.");
+	}
 
-/**
- * Initialization code for test mode should go here.
- * 
- * Use this method for initialization code which will be called each time
- * the robot enters test mode.
- */
-void RobotDemo::TestInit() {
-	logger->Info("Test mode init.");
-	driver->Stop();
-}
+	/**
+	 * Periodic code for autonomous mode.
+	 */
+	void RevereRobot::AutonomousPeriodic() {
+		if (timer->HasPeriodPassed(1000.0)) {
+			driver->SetDisabled(true);
+		}
+		m_watchdog.Feed();
+		driver->Drive(0.25, 0.25);
+	}
 
-/**
- * Periodic code for test mode should go here.
- *
- * Use this method for code which will be called periodically at a regular
- * rate while the robot is in test mode.
- */
-void RobotDemo::TestPeriodic() {
-	m_watchdog.Feed();
-}
+	/**
+	 * Initialization code for teleop mode.
+	 */
+	void RevereRobot::TeleopInit() {
+		logger->Info("Teleop mode init.");
+		driver->Stop();
+		driver->SetDisabled(false);
+		driver->SetSafetyEnabled(true);
+		driver->SetExpiration(0.5);
+		logger->Info("Finished teleop mode init.");
+	}
 
-/*
- * Destructor
- */
-	~RobotDemo() {
+	/**
+	 * Periodic code for teleop mode.
+	 */
+	void RevereRobot::TeleopPeriodic() {
+		m_watchdog.Feed();
+		controller->TeleopTick();
+	}
+
+	/**
+	 * Initialization code for test mode.
+	 */
+	void RevereRobot::TestInit() {
+		logger->Info("Test mode init.");
+		driver->Stop();
+		driver->SetDisabled(false);
+		driver->SetSafetyEnabled(true);
+		driver->SetExpiration(0.5);
+		logger->Info("Finished test mode init.");
+	}
+
+	/**
+	 * Periodic code for test mode.
+	 */
+	void RevereRobot::TestPeriodic() {
+		TeleopPeriodic();
+	}
+
+	/**
+	 * Destructor
+	 */
+	~RevereRobot() {
 		logger->All("Main Destructor");
 		delete controller;
 		delete driver;
 		delete logger;
+		delete timer;
 	}
 
 };
 
-START_ROBOT_CLASS(RobotDemo);
+START_ROBOT_CLASS(RevereRobot)
+;
 
