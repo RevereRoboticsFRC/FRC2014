@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "Utils/Logger.h"
+#include "Drive/Driver.h"
 
 /**
  * This is a demo program showing the use of the RobotBase class.
@@ -10,17 +11,18 @@ class RobotDemo : public IterativeRobot
 {
 	Logger* logger;
 	
-	RobotDrive* myRobot; 	// robot drive system
+//	RobotDrive* myRobot; 	// robot drive system
+	Driver* driver;
 	Joystick* stick; 		// only joystick
 
 public:
 	RobotDemo()
 	{
 		logger = new Logger(FINE, "RevereBot");
-		myRobot = new RobotDrive(1, 2);
+		driver = new Driver(1, 2);
 		stick = new Joystick(1);
 		
-		myRobot->SetExpiration(0.1);
+		driver->SetExpiration(0.1);
 		this->SetPeriod(0); 			//Set update period to sync with robot control packets (20ms nominal)
 	}
 	
@@ -32,8 +34,6 @@ public:
  */
 void RobotDemo::RobotInit() {
 	logger->Info("Robot global init.");
-	myRobot->SetInvertedMotor(RobotDrive::kFrontLeftMotor, true);
-	myRobot->SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
 	
 	logger->Info("Done init.");
 }
@@ -46,6 +46,9 @@ void RobotDemo::RobotInit() {
  */
 void RobotDemo::DisabledInit() {
 	logger->Info("Disabled mode init.");
+	driver->Stop();
+	driver->SetDisabled(true);
+	driver->SetSafetyEnabled(true);
 }
 
 /**
@@ -65,6 +68,9 @@ void RobotDemo::DisabledPeriodic() {
  */
 void RobotDemo::AutonomousInit() {
 	logger->Info("Auton mode init.");
+	driver->Stop();
+	driver->SetDisabled(false);
+	driver->SetSafetyEnabled(false);
 }
 
 /**
@@ -74,6 +80,7 @@ void RobotDemo::AutonomousInit() {
  * rate while the robot is in autonomous mode.
  */
 void RobotDemo::AutonomousPeriodic() {
+	driver->Drive(0.25, 0.25);
 }
 
 /**
@@ -84,6 +91,7 @@ void RobotDemo::AutonomousPeriodic() {
  */
 void RobotDemo::TeleopInit() {
 	logger->Info("Teleop mode init.");
+	driver->Stop();
 }
 
 /**
@@ -134,7 +142,7 @@ void RobotDemo::TestPeriodic() {
 	~RobotDemo() {
 		logger->All("Main Destructor");
 		delete stick;
-		delete myRobot;
+		delete driver;
 		delete logger;
 	}
 
