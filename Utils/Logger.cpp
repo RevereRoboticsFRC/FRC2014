@@ -33,7 +33,7 @@ void Logger::Log(Level logLevel, string message) {
 	default:
 		s = "undef";
 	}
-	cout << "[" << s << "]" << message << endl;
+	cout << loggerName << " [" << s << "] " << message << endl;
 }
 
 void Logger::All(string s) {

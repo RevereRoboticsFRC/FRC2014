@@ -1,4 +1,5 @@
 #include "WPILib.h"
+#include "Drive/RobotController.h"
 #include "Utils/Logger.h"
 #include "Drive/Driver.h"
 
@@ -10,19 +11,16 @@
 class RobotDemo : public IterativeRobot
 {
 	Logger* logger;
-	
-//	RobotDrive* myRobot; 	// robot drive system
+	RobotController* controller;
 	Driver* driver;
-	Joystick* stick; 		// only joystick
 
 public:
 	RobotDemo()
 	{
 		logger = new Logger(FINE, "RevereBot");
 		driver = new Driver(1, 2);
-		stick = new Joystick(1);
+		controller = new RobotController(driver, new Joystick(1));
 		
-		driver->SetExpiration(0.1);
 		this->SetPeriod(0); 			//Set update period to sync with robot control packets (20ms nominal)
 	}
 	
@@ -58,6 +56,8 @@ void RobotDemo::DisabledInit() {
  * rate while the robot is in disabled mode.
  */
 void RobotDemo::DisabledPeriodic() {
+	m_watchdog.Feed();
+	
 }
 
 /**
@@ -80,6 +80,7 @@ void RobotDemo::AutonomousInit() {
  * rate while the robot is in autonomous mode.
  */
 void RobotDemo::AutonomousPeriodic() {
+	m_watchdog.Feed();
 	driver->Drive(0.25, 0.25);
 }
 
@@ -92,6 +93,9 @@ void RobotDemo::AutonomousPeriodic() {
 void RobotDemo::TeleopInit() {
 	logger->Info("Teleop mode init.");
 	driver->Stop();
+	driver->SetDisabled(false);
+	driver->SetSafetyEnabled(true);
+	driver->SetExpiration(0.5);
 }
 
 /**
@@ -101,20 +105,8 @@ void RobotDemo::TeleopInit() {
  * rate while the robot is in teleop mode.
  */
 void RobotDemo::TeleopPeriodic() {
-//	float directionDegrees = stick->GetDirectionDegrees();
-//	float directionMagnitude = stick->GetMagnitude();
-//	
-//	SmartDashboard::PutNumber("Degress", directionDegrees);
-//	SmartDashboard::PutNumber("Mag", directionMagnitude);
-//	
-//	//	Filter values lower than 0.06 for mag
-//	if(directionMagnitude < 0.06) {
-//		myRobot->Drive(0, 0);
-//		return;
-//	}
-//	
-//	myRobot->Drive(directionMagnitude, directionDegrees/360.0);
-//	myRobot->ArcadeDrive(directionMagnitude, directionDegrees, false); 
+	m_watchdog.Feed();
+	controller->TeleopTick();
 }
 
 /**
@@ -125,6 +117,7 @@ void RobotDemo::TeleopPeriodic() {
  */
 void RobotDemo::TestInit() {
 	logger->Info("Test mode init.");
+	driver->Stop();
 }
 
 /**
@@ -134,6 +127,7 @@ void RobotDemo::TestInit() {
  * rate while the robot is in test mode.
  */
 void RobotDemo::TestPeriodic() {
+	m_watchdog.Feed();
 }
 
 /*
@@ -141,7 +135,7 @@ void RobotDemo::TestPeriodic() {
  */
 	~RobotDemo() {
 		logger->All("Main Destructor");
-		delete stick;
+		delete controller;
 		delete driver;
 		delete logger;
 	}

@@ -166,6 +166,10 @@ FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/Driver.o : $(PRJ_ROOT_DIR
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/RobotController.o : $(PRJ_ROOT_DIR)/Drive/RobotController.cpp $(FORCE_FILE_BUILD)
+	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
+
+
 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.o : $(PRJ_ROOT_DIR)/MyRobot.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
@@ -179,6 +183,7 @@ FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/RobotMath.o : $(PRJ_ROOT_
 
 
 OBJECTS_FRC2014_partialImage = FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/Driver.o \
+	 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/RobotController.o \
 	 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.o \
 	 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.o \
 	 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/RobotMath.o
@@ -195,8 +200,8 @@ FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage_clean :
 
 force : 
 
-DEP_FILES := FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/Driver.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.d \
-	 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/RobotMath.d
+DEP_FILES := FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/Driver.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/RobotController.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.d \
+	 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/RobotMath.d
 -include $(DEP_FILES)
 
 
