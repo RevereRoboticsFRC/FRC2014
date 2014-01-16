@@ -3,7 +3,9 @@
 #include "Utils/Logger.h"
 #include "Drive/Driver.h"
 
-#define VERSION "1.0 Parkeet"
+#define VERSION "1.0 "
+#define TEAM_NUMBER "Team 5249"
+
 
 class RevereRobot: public IterativeRobot {
 
@@ -19,7 +21,7 @@ public:
 		driver = new Driver(1, 2);
 		controller = new RobotController(driver, new Joystick(1));
 		timer = new Timer();
-
+		
 		//	Set update period to sync with robot control packets (20ms nominal)
 		SetPeriod(0);
 	}
@@ -29,8 +31,11 @@ public:
 	 */
 	void RevereRobot::RobotInit() {
 		logger->Info("Robot global init.");
-		logger->All("Revere FRC 2014");
+		logger->All("==== REVERE FRC 2014 ====");
+		logger->All(TEAM_NUMBER);
 		logger->All(VERSION);
+		logger->All(__TIME__);
+		logger->All("=========================");
 
 		logger->Info("Finished global init.");
 	}
@@ -52,7 +57,6 @@ public:
 	 */
 	void RevereRobot::DisabledPeriodic() {
 		m_watchdog.Feed();
-
 	}
 
 	/**
@@ -125,9 +129,13 @@ public:
 	~RevereRobot() {
 		logger->All("Main Destructor");
 		delete controller;
+		controller = NULL;
 		delete driver;
+		driver = NULL;
 		delete logger;
+		logger = NULL;
 		delete timer;
+		timer = NULL;
 	}
 
 };
