@@ -79,10 +79,12 @@ public:
 	 * Periodic code for autonomous mode.
 	 */
 	void RevereRobot::AutonomousPeriodic() {
+		//For testing, allowing disable autonomous after one second
 		if (timer->HasPeriodPassed(1000.0)) {
 			driver->SetDisabled(true);
 		}
 		m_watchdog.Feed();
+		//Drive forward at one quarter speed 
 		driver->Drive(0.25, 0.25);
 	}
 
