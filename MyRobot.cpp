@@ -36,6 +36,7 @@ public:
 		logger->All("==== REVERE FRC 2014 ====");
 		logger->All(TEAM_NUMBER);
 		logger->All(VERSION);
+		logger->All(__DATE__);
 		logger->All(__TIME__);
 		logger->All("=========================");
 
@@ -80,7 +81,8 @@ public:
 	 */
 	void RevereRobot::AutonomousPeriodic() {
 		//For testing, allowing disable autonomous after one second
-		if (timer->HasPeriodPassed(1000.0)) {
+		//	Timer takes seconds as the argument
+		if (timer->HasPeriodPassed(1.0)) {
 			driver->SetDisabled(true);
 		}
 		m_watchdog.Feed();
@@ -117,6 +119,9 @@ public:
 		driver->SetDisabled(false);
 		driver->SetSafetyEnabled(true);
 		driver->SetExpiration(0.5);
+		timer->Stop();
+		timer->Reset();
+		timer->Start();
 		logger->Info("Finished test mode init.");
 	}
 
@@ -124,7 +129,27 @@ public:
 	 * Periodic code for test mode.
 	 */
 	void RevereRobot::TestPeriodic() {
-		TeleopPeriodic();
+		//	Temporary: Test motors same speed for 1 second
+		if(!timer->HasPeriodPassed(1.0)) {
+			driver->Drive(0.25, 0.25);
+		}
+		//	Stop for 1 second
+		else if(!timer->HasPeriodPassed(2.0)) {
+			driver->Stop();
+		}
+		//	Then go backwards 1 second
+		else if(!timer->HasPeriodPassed(3.0)) {
+			driver->Drive(-0.25, -0.25);
+		}
+		//	Then stop for another second
+		else if(!timer->HasPeriodPassed(4.0)){
+			driver->Stop();
+		}
+		//	Teleop
+		else {
+			TeleopPeriodic();
+		}
+		
 	}
 
 	/**
