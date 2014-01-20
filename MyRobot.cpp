@@ -149,7 +149,8 @@ public:
 		}
 		//	Teleop
 		else {
-			TeleopPeriodic();
+			//	Can't just call TeleopPeriodic(), will cause double-ticking!
+			controller->TeleopTick();
 		}
 
 	}
@@ -169,11 +170,11 @@ public:
 
 	unsigned int RevereRobot::SecondsToTicks(float seconds) {
 		//	Ensure seconds is non-negative and flip sign if that's the case (should we really do this?)
-		if(seconds < 0.0) {
+		if (seconds < 0.0) {
 			seconds *= -1.0;
 		}
 		//	   seconds->millis->ticks
-		return (unsigned int)(seconds * 1000.0 / TICK_LENGTH);
+		return (unsigned int) (seconds * 1000.0 / TICK_LENGTH);
 	}
 
 	float RevereRobot::TicksToSeconds(unsigned int ticks) {
