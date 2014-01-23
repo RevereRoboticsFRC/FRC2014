@@ -14,8 +14,12 @@ void Driver::Drive(float left, float right) {
 		rightMotor->StopMotor();
 		return;
 	}
-	leftMotor->SetSpeed(Clamp(-1.0, 1.0, left));
-	rightMotor->SetSpeed(Clamp(-1.0, 1.0, right));
+	left = Clamp(-1.0, 1.0, left);
+	right = Clamp(-1.0, 1.0, right);
+	SmartDashboard::PutNumber("motorSpdLeft", left);
+	SmartDashboard::PutNumber("motorSpdRight", right);
+	leftMotor->SetSpeed(left);
+	rightMotor->SetSpeed(right);
 }
 
 void Driver::Stop() {
@@ -29,13 +33,6 @@ void Driver::SetSafetyEnabled(bool enabled) {
 }
 bool Driver::IsSafetyEnabled() {
 	return leftMotor->IsSafetyEnabled() && rightMotor->IsSafetyEnabled();
-}
-
-void Driver::SetDisabled(bool b) {
-	disabled = b;
-}
-bool Driver::IsDisabled() {
-	return disabled;
 }
 
 void Driver::SetExpiration(float f) {

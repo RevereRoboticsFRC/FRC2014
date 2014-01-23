@@ -16,7 +16,7 @@ class RevereRobot: public IterativeRobot {
 	RobotController* controller;
 	Driver* driver;
 	//	Sanity timer
-	Timer* timer;
+//	Timer* timer;
 
 	unsigned int modeTickCount;
 
@@ -25,7 +25,7 @@ public:
 		logger = new Logger(FINE, "RevereBot");
 		driver = new Driver(1, 2);
 		controller = new RobotController(driver, new Joystick(1));
-		timer = new Timer();
+//		timer = new Timer();
 		ResetTick();
 
 		//	Set update period to sync with robot control packets (20ms nominal)
@@ -52,7 +52,7 @@ public:
 	void RevereRobot::DisabledInit() {
 		logger->Info("Disabled mode init.");
 		driver->Stop();
-		driver->SetDisabled(true);
+//		driver->SetDisabled(true);
 		driver->SetSafetyEnabled(true);
 		ResetTick();
 		logger->Info("Finished disabled mode init.");
@@ -72,7 +72,7 @@ public:
 	void RevereRobot::AutonomousInit() {
 		logger->Info("Auton mode init.");
 		driver->Stop();
-		driver->SetDisabled(false);
+//		driver->SetDisabled(false);
 		driver->SetSafetyEnabled(false);
 		ResetTick();
 		logger->Info("Finished auton mode init.");
@@ -85,11 +85,12 @@ public:
 		OnTick();
 		//For testing, allowing disable autonomous after one second
 		//	Timer takes seconds as the argument
-		if (timer->HasPeriodPassed(1.0)) {
-			driver->SetDisabled(true);
-		}
+//		if (timer->HasPeriodPassed(1.0)) {
+//			driver->Stop();
+////			driver->SetDisabled(true);
+//		}
 		//Drive forward at one quarter speed 
-		driver->Drive(0.25, 0.25);
+		driver->Drive(0.0, 0.75);
 	}
 
 	/**
@@ -98,7 +99,7 @@ public:
 	void RevereRobot::TeleopInit() {
 		logger->Info("Teleop mode init.");
 		driver->Stop();
-		driver->SetDisabled(false);
+//		driver->SetDisabled(false);
 		driver->SetSafetyEnabled(true);
 		driver->SetExpiration(0.5);
 		ResetTick();
@@ -119,7 +120,7 @@ public:
 	void RevereRobot::TestInit() {
 		logger->Info("Test mode init.");
 		driver->Stop();
-		driver->SetDisabled(false);
+//		driver->SetDisabled(false);
 		driver->SetSafetyEnabled(true);
 		driver->SetExpiration(0.5);
 		ResetTick();
@@ -148,10 +149,10 @@ public:
 			driver->Stop();
 		}
 		//	Teleop
-		else {
-			//	Can't just call TeleopPeriodic(), will cause double-ticking!
-			controller->TeleopTick();
-		}
+//		else {
+//			//	Can't just call TeleopPeriodic(), will cause double-ticking!
+//			controller->TeleopTick();
+//		}
 
 	}
 
@@ -188,9 +189,9 @@ public:
 	 */
 	void RevereRobot::ResetTick() {
 		modeTickCount = 0;
-		timer->Stop();
-		timer->Reset();
-		timer->Start();
+//		timer->Stop();
+//		timer->Reset();
+//		timer->Start();
 	}
 
 	/**
@@ -204,8 +205,8 @@ public:
 		driver = NULL;
 		delete logger;
 		logger = NULL;
-		delete timer;
-		timer = NULL;
+//		delete timer;
+//		timer = NULL;
 	}
 
 };

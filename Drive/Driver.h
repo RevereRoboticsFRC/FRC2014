@@ -14,9 +14,6 @@ public:
 	void SetSafetyEnabled(bool);
 	bool IsSafetyEnabled();
 	
-	void SetDisabled(bool);
-	bool IsDisabled();
-	
 	void SetExpiration(float);
 	float GetExpiration();
 	
