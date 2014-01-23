@@ -40,11 +40,12 @@ void RobotController::TeleopTick() {
 
 	//	Hybrid method (Excel proven)
 	float directionDeg = joystick->GetDirectionDegrees();
-	directionDeg += 90.0;
-	//	If we go past 180 degrees, wrap around to the negative complement (e.g. 190 -> -170)
-	if(directionDeg > 180.0) {
-		directionDeg = -180.0 + (directionDeg - 180.0);
-	}
+	//	Joystick returns trig-correct values, no need to correct them
+	//	directionDeg += 90.0;
+	//	//	If we go past 180 degrees, wrap around to the negative complement (e.g. 190 -> -170)
+	//	if(directionDeg > 180.0) {
+	//		directionDeg = -180.0 + (directionDeg - 180.0);
+	//	}
 	float directionRads = directionDeg * PI / 180.0;
 	float magnitude = Clamp(0.0, 1.0, joystick->GetMagnitude());
 	float x = cos(directionRads) * magnitude;
