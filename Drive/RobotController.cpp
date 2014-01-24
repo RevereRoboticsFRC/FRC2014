@@ -29,13 +29,15 @@ void RobotController::TeleopTick() {
 	float directionRads = directionDeg * PI / 180.0;
 	//	Temporary 0.32 to compensate for motor startup
 	float magnitude = Clamp(0.0, 1.0, joystick->GetMagnitude());
-	if(magnitude > 0.025) {
+	
+	magnitude = pow(magnitude, 1.5);
+	if(magnitude > 0.15) {
 		magnitude += 0.32;
-	}
+	} 
 	
 	//	Input curve fitting
 	//	Square magnitude for better "feels" at low speeds
-	magnitude = pow(magnitude, 1.5);
+	
 	
 	float x = cos(directionRads) * magnitude;
 	float y = sin(directionRads) * magnitude;
