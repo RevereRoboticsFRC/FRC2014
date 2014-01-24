@@ -11,45 +11,36 @@ RobotController::RobotController(Driver* d, Joystick* j) {
 	joystick = j;
 }
 
+void debugOut(Joystick* joy) {
+	SmartDashboard::PutNumber("JoyDeg", joy->GetDirectionDegrees());
+	SmartDashboard::PutNumber("JoyMag", joy->GetMagnitude());
+	SmartDashboard::PutNumber("JoyX", joy->GetX(Joystick::kRightHand));
+	SmartDashboard::PutNumber("JoyY", joy->GetY(Joystick::kRightHand));
+	SmartDashboard::PutNumber("JoyZ", joy->GetZ());
+	SmartDashboard::PutNumber("Throttle", joy->GetThrottle());
+	SmartDashboard::PutNumber("Twist", joy->GetTwist());
+}
+
 void RobotController::TeleopTick() {
-	//	//	Polar method
-	//	//	Magnitude varies between 0.0 and 1.0, but due to joystick error may exceed 1.0
-	//	float magnitude = Clamp(0.0, 1.0, joystick->GetMagnitude());
-	//	//	Direction varies between +/-0.0 and +/-180 degrees: -90 is left, +90 right.
-	//	float directionDeg = joystick->GetDirectionDegrees();
-	//	//	TODO: Input curve mapping
-	//	
-	//	//	Invert magnitude if y is negative (past +/-90 towards +/-180)
-	//	if(directionDeg > 90.0 || directionDeg < -90.0) {
-	//		magnitude = -magnitude;
-	//	}
-	//	driver->Drive(magnitude, magnitude);
-
-	//	//	Cartesian method
-	//	float joyX = Clamp(-1.0, 1.0, joystick->GetX(Joystick::kRightHand));
-	//	float joyY = Clamp(-1.0, 1.0, joystick->GetY(Joystick::kRightHand));
-	//	float magnitude = Clamp(0.0, 1.0, joystick->GetMagnitude());
-	//	//	TODO: Input curve mapping
-	//
-	//	//	And tank drive logic/math goes here
-	//	float u = (1 - abs(joyX)) * joyY + joyY;
-	//	float v = (1 - abs(joyY)) * joyX + joyX;
-	//	float right = (u + v)/2.0;
-	//	float left  = (u - v)/2.0;
-	//	driver->Drive(left, right);
-
+	debugOut(joystick);
 	//	Hybrid method (Excel proven)
 	float directionDeg = joystick->GetDirectionDegrees();
 	//	Joystick returns trig-correct values, no need to correct them
-	//	directionDeg += 90.0;
-	//	//	If we go past 180 degrees, wrap around to the negative complement (e.g. 190 -> -170)
-	//	if(directionDeg > 180.0) {
-	//		directionDeg = -180.0 + (directionDeg - 180.0);
-	//	}
 	float directionRads = directionDeg * PI / 180.0;
+	//	Temporary 0.32 to compensate for motor startup
 	float magnitude = Clamp(0.0, 1.0, joystick->GetMagnitude());
+	if(magnitude > 0.025) {
+		magnitude += 0.32;
+	}
+	
+	//	Input curve fitting
+	//	Square magnitude for better "feels" at low speeds
+	magnitude = pow(magnitude, 1.5);
+	
 	float x = cos(directionRads) * magnitude;
 	float y = sin(directionRads) * magnitude;
+	//	TODO Reduce low turn sensitivity
+	
 	float u = (1-abs(x))*y + y;
 	float v = (1-abs(y))*x + x;
 	float left = (u - v)/2.0;
