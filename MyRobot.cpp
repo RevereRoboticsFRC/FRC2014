@@ -111,7 +111,7 @@ public:
 	 */
 	void RevereRobot::TeleopPeriodic() {
 		OnTick();
-		controller->TeleopTick();
+		controller->TeleopTick(modeTickCount);
 	}
 
 	/**
