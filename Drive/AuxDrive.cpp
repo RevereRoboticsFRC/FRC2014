@@ -14,7 +14,7 @@ AuxDrive::AuxDrive() {
 
 void AuxDrive::WinchDrive(float f) {
 	f = Clamp(-1.0, 1.0, f);
-	winchMotor->SetSpeed(f);
+	winchMotor->SetSpeed(-f);
 }
 
 void AuxDrive::WinchStop() {
