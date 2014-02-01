@@ -1,5 +1,6 @@
 #import "AuxDrive.h"
 #import "../Utils/RobotMath.h"
+#import "WPILib.h"
 /*
  * AuxDrive.cpp
  *
@@ -14,6 +15,7 @@ AuxDrive::AuxDrive() {
 
 void AuxDrive::WinchDrive(float f) {
 	f = Clamp(-1.0, 1.0, f);
+	SmartDashboard::PutNumber("WinchSpd", -f);
 	winchMotor->SetSpeed(-f);
 }
 
@@ -22,5 +24,5 @@ void AuxDrive::WinchStop() {
 }
 
 void AuxDrive::Tick() {
-	
+
 }

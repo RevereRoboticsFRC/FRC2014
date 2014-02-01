@@ -1,8 +1,8 @@
 #include "WPILib.h"
 
 class Driver {
-	Victor* leftMotor;
-	Victor* rightMotor;
+	Victor* m_rightMotor;
+	Victor* m_leftMotor;
 	bool disabled;
 	
 public:

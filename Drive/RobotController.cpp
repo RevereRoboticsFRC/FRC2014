@@ -2,14 +2,15 @@
 #include "../Utils/RobotMath.h"
 #include <cmath>
 
-#define PI 3.14159
+const float PI = 3.14159;
+const float ANGLE_THRESH = 80.0;
 
 float abs(float);
 
-
-RobotController::RobotController(Driver* d, Joystick* j) {
+RobotController::RobotController(Logger* l, Driver* d, Joystick* j) {
 	driver = d;
 	joystick = j;
+	logger = l;
 	auxDrive = new AuxDrive();
 }
 
@@ -30,25 +31,60 @@ void RobotController::TeleopTick(unsigned int tickCount) {
 		debugOut(joystick);
 	}
 
-	//	TEMP WINCH STUFFS
 	if (joystick->GetRawButton(2)) {
 		Winch();
 	} else {
+
 		auxDrive->WinchStop();
-		if(joystick->GetRawButton(1)) {
-//			TankSpin();
-		} else {
-//			Drive();
-		}
+		Drive();
 	}
 }
 
 void RobotController::Drive() {
 	//	Hybrid method (Excel proven)
 	float directionDeg = joystick->GetDirectionDegrees();
+
+	SmartDashboard::PutNumber("CntrlDirectionRaw", directionDeg);
+
+	//	TEMP TEST
+	if (abs(directionDeg) <= ANGLE_THRESH) {
+		printf("LowDirection %f\n", directionDeg);
+		//	-80 to +80
+		//	Remap 0 to 80 to 0 to 45
+		directionDeg = directionDeg / ANGLE_THRESH * 45.0;
+	} else if (abs(directionDeg) < (180.0 - ANGLE_THRESH)) {
+		//	Close to 90
+		if (IsInRange(88, 92, abs(directionDeg))) {
+			printf("TankSpin\n");
+			TankSpin();
+		} else {
+			printf("MedDirection %f\n", directionDeg);
+			//	-100 to -80 or +100 to +80
+			//	Remap 80 to 100 to 45 to 135
+			if (directionDeg > 0) {
+				directionDeg = (directionDeg - 80) / 20.0 * 90.0 + 45.0;
+			} else {
+				directionDeg = (directionDeg + 80) / 20.0 * 90.0 - 45.0;
+			}
+		}
+	} else {
+		//	-180 to -100 or +180 to +100
+		//	Remap 100 to 180 to 135 to 180
+		printf("HighDirection %f\n", directionDeg);
+		if (directionDeg > 0) {
+			directionDeg = (((directionDeg - 100.0) / ANGLE_THRESH) * 45.0)
+					+ 135.0;
+		} else {
+			directionDeg = (((directionDeg + 100.0) / ANGLE_THRESH) * 45.0)
+					- 135.0;
+		}
+	}
+
+	SmartDashboard::PutNumber("CntrlDirectionAdj", directionDeg);
+
 	//	Joystick returns trig-correct values, no need to correct them
 	float directionRads = directionDeg * PI / 180.0;
-	
+
 	//	Temporary 0.32 to compensate for motor startup
 	float magnitude = joystick->GetMagnitude();
 	if (magnitude > 0.15) {
@@ -60,26 +96,25 @@ void RobotController::Drive() {
 
 	float x = cos(directionRads) * magnitude;
 	float y = sin(directionRads) * magnitude;
-	
+
 	float u = (1 - abs(x)) * y + y;
 	float v = (1 - abs(y)) * x + x;
-	float left = (u - v) / 2.0;
-	float right = (u + v) / 2.0;
-	driver->Drive(left, right);
+	float right = (u - v) / 2.0;
+	float left = (u + v) / 2.0;
+	driver->Drive(-right, left);
 }
 
 void RobotController::TankSpin() {
-	float x = joystick->GetX(Joystick::kRightHand);
-	//	Right is + (CW), left is - (CCW)
-	float sign = (x > 0 ? 1.0 : -1.0);
-	float mag = Clamp(0.0, 1.0, abs(x));
-	driver->Drive(mag * sign, mag * -sign);
+	float x = Clamp(-1.0, 1.0, joystick->GetX(Joystick::kRightHand));
+	// Right is + (CW), left is - (CCW)
+	driver->Drive(x, x);
 }
 
 void RobotController::Winch() {
 	float y = joystick->GetY(Joystick::kRightHand);
 	//	Forward is +, up
-	auxDrive->WinchDrive(Clamp(-1.0, 1.0, y));
+	float mag = Clamp(-1.0, 1.0, y);
+	auxDrive->WinchDrive(mag);
 }
 
 float abs(float f) {

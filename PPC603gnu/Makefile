@@ -31,8 +31,8 @@ else
 MODE_DIR := NonDebug
 endif
 OBJ_DIR := .
-PRJ_ROOT_DIR := C:/WindRiver/workspace/FRC2014
 WS_ROOT_DIR := C:/WindRiver/workspace
+PRJ_ROOT_DIR := $(WS_ROOT_DIR)/FRC2014
 
 
 
@@ -55,6 +55,8 @@ LIBS =
 IDE_INCLUDES = -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/WPILib -I$(WIND_BASE)/target/h/wrn/coreip 
 
 IDE_LIBRARIES = $(WIND_BASE)/target/lib/WPILib.a 
+
+IDE_DEFINES = 
 
 
 
@@ -101,6 +103,7 @@ FRC2014/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -O2 -fstrength-reduce -fno-builti
 endif
 FRC2014/$(MODE_DIR)/% : IDE_INCLUDES = -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/WPILib -I$(WIND_BASE)/target/h/wrn/coreip 
 FRC2014/$(MODE_DIR)/% : IDE_LIBRARIES = $(WIND_BASE)/target/lib/WPILib.a 
+FRC2014/$(MODE_DIR)/% : IDE_DEFINES = 
 FRC2014/$(MODE_DIR)/% : PROJECT_TYPE = DKM
 FRC2014/$(MODE_DIR)/% : DEFINES = 
 FRC2014/$(MODE_DIR)/% : EXPAND_DBG = 0
@@ -145,6 +148,7 @@ FRC2014_partialImage/$(MODE_DIR)/% : DEBUGFLAGS_Assembler = -O2 -fstrength-reduc
 endif
 FRC2014_partialImage/$(MODE_DIR)/% : IDE_INCLUDES = -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/WPILib -I$(WIND_BASE)/target/h/wrn/coreip 
 FRC2014_partialImage/$(MODE_DIR)/% : IDE_LIBRARIES = $(WIND_BASE)/target/lib/WPILib.a 
+FRC2014_partialImage/$(MODE_DIR)/% : IDE_DEFINES = 
 FRC2014_partialImage/$(MODE_DIR)/% : PROJECT_TYPE = DKM
 FRC2014_partialImage/$(MODE_DIR)/% : DEFINES = 
 FRC2014_partialImage/$(MODE_DIR)/% : EXPAND_DBG = 0
@@ -158,27 +162,27 @@ FRC2014_partialImage/$(MODE_DIR)/% : LIBPATH =
 FRC2014_partialImage/$(MODE_DIR)/% : LIBS = 
 FRC2014_partialImage/$(MODE_DIR)/% : OBJ_DIR := FRC2014_partialImage/$(MODE_DIR)
 
-FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/AuxDrive.o : C:/WindRiver/workspace/FRC2014/Drive/AuxDrive.cpp
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/AuxDrive.o : $(PRJ_ROOT_DIR)/Drive/AuxDrive.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
-FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/Driver.o : C:/WindRiver/workspace/FRC2014/Drive/Driver.cpp
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/Driver.o : $(PRJ_ROOT_DIR)/Drive/Driver.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
-FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/RobotController.o : C:/WindRiver/workspace/FRC2014/Drive/RobotController.cpp
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/RobotController.o : $(PRJ_ROOT_DIR)/Drive/RobotController.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
-FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.o : C:/WindRiver/workspace/FRC2014/MyRobot.cpp
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.o : $(PRJ_ROOT_DIR)/MyRobot.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
-FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.o : C:/WindRiver/workspace/FRC2014/Utils/Logger.cpp
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.o : $(PRJ_ROOT_DIR)/Utils/Logger.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
-FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/RobotMath.o : C:/WindRiver/workspace/FRC2014/Utils/RobotMath.cpp
+FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/RobotMath.o : $(PRJ_ROOT_DIR)/Utils/RobotMath.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
@@ -198,6 +202,8 @@ _clean :: FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage_clean
 
 FRC2014_partialImage/$(MODE_DIR)/FRC2014_partialImage_clean : 
 	$(TRACE_FLAG)if [ -d "FRC2014_partialImage" ]; then cd "FRC2014_partialImage"; rm -rf $(MODE_DIR); fi
+
+force : 
 
 DEP_FILES := FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/AuxDrive.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/Driver.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Drive/RobotController.d \
 	 FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/MyRobot.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/Logger.d FRC2014_partialImage/$(MODE_DIR)/Objects/FRC2014/Utils/RobotMath.d

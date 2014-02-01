@@ -4,7 +4,7 @@
 #include "Utils/RobotMath.h"
 #include "Drive/Driver.h"
 
-#define VERSION "1.0 "
+#define VERSION "1.01"
 #define TEAM_NUMBER "Team 5249"
 #define TICK_LENGTH 20.0
 
@@ -24,7 +24,7 @@ public:
 	RevereRobot() {
 		logger = new Logger(FINE, "RevereBot");
 		driver = new Driver(1, 2);
-		controller = new RobotController(driver, new Joystick(1));
+		controller = new RobotController(logger, driver, new Joystick(1));
 //		timer = new Timer();
 		ResetTick();
 
@@ -83,14 +83,7 @@ public:
 	 */
 	void RevereRobot::AutonomousPeriodic() {
 		OnTick();
-		//For testing, allowing disable autonomous after one second
-		//	Timer takes seconds as the argument
-//		if (timer->HasPeriodPassed(1.0)) {
-//			driver->Stop();
-////			driver->SetDisabled(true);
-//		}
-		//Drive forward at one quarter speed 
-		driver->Drive(0.0, 0.75);
+		driver->Drive(0.25, 0.25);
 	}
 
 	/**
