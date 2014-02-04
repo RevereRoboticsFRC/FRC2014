@@ -7,11 +7,11 @@ const float ANGLE_THRESH = 80.0;
 
 float abs(float);
 
-RobotController::RobotController(Logger* l, Driver* d, Joystick* j) {
+RobotController::RobotController(Logger* l, Driver* d, AuxDrive* a, Joystick* j) {
 	driver = d;
 	joystick = j;
 	logger = l;
-	auxDrive = new AuxDrive();
+	auxDrive = a;
 }
 
 void debugOut(Joystick* joy) {
@@ -27,17 +27,10 @@ void debugOut(Joystick* joy) {
 }
 
 void RobotController::TeleopTick(unsigned int tickCount) {
-	if (tickCount % 25 == 0) {
+	if (tickCount % 5 == 0) {
 		debugOut(joystick);
 	}
-
-	if (joystick->GetRawButton(2)) {
-		Winch();
-	} else {
-
-		auxDrive->WinchStop();
-		Drive();
-	}
+	Drive();
 }
 
 void RobotController::Drive() {
@@ -48,17 +41,17 @@ void RobotController::Drive() {
 
 	//	TEMP TEST
 	if (abs(directionDeg) <= ANGLE_THRESH) {
-		printf("LowDirection %f\n", directionDeg);
+//		printf("LowDirection %f\n", directionDeg);
 		//	-80 to +80
 		//	Remap 0 to 80 to 0 to 45
 		directionDeg = directionDeg / ANGLE_THRESH * 45.0;
 	} else if (abs(directionDeg) < (180.0 - ANGLE_THRESH)) {
 		//	Close to 90
 		if (IsInRange(88, 92, abs(directionDeg))) {
-			printf("TankSpin\n");
+//			printf("TankSpin\n");
 			TankSpin();
 		} else {
-			printf("MedDirection %f\n", directionDeg);
+//			printf("MedDirection %f\n", directionDeg);
 			//	-100 to -80 or +100 to +80
 			//	Remap 80 to 100 to 45 to 135
 			if (directionDeg > 0) {
@@ -70,7 +63,7 @@ void RobotController::Drive() {
 	} else {
 		//	-180 to -100 or +180 to +100
 		//	Remap 100 to 180 to 135 to 180
-		printf("HighDirection %f\n", directionDeg);
+//		printf("HighDirection %f\n", directionDeg);
 		if (directionDeg > 0) {
 			directionDeg = (((directionDeg - 100.0) / ANGLE_THRESH) * 45.0)
 					+ 135.0;
@@ -109,13 +102,13 @@ void RobotController::TankSpin() {
 	// Right is + (CW), left is - (CCW)
 	driver->Drive(x, x);
 }
-
-void RobotController::Winch() {
-	float y = joystick->GetY(Joystick::kRightHand);
-	//	Forward is +, up
-	float mag = Clamp(-1.0, 1.0, y);
-	auxDrive->WinchDrive(mag);
-}
+//
+//void RobotController::Winch() {
+//	float y = joystick->GetY(Joystick::kRightHand);
+//	//	Forward is +, up
+//	float mag = Clamp(-1.0, 1.0, y);
+//	auxDrive->WinchDrive(mag);
+//}
 
 float abs(float f) {
 	if (f < 0.0) {

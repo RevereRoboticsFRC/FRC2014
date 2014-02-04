@@ -6,7 +6,9 @@
 
 #define VERSION "1.01"
 #define TEAM_NUMBER "Team 5249"
-#define TICK_LENGTH 20.0
+static const float TICK_LENGTH_MS = 20.0;
+static const float TICK_LENGTH_SEC = 0.02;
+static const bool USE_SYNC_TICK = false;
 
 //Test comment
 
@@ -15,21 +17,32 @@ class RevereRobot: public IterativeRobot {
 	Logger* logger;
 	RobotController* controller;
 	Driver* driver;
-	//	Sanity timer
-//	Timer* timer;
-
+	AuxDrive* auxDrive;
+	Joystick* joystick;
+	Gyro* gyro;
+	
 	unsigned int modeTickCount;
+	unsigned int lastNewDataTick;
+	bool newData;
 
 public:
 	RevereRobot() {
+		joystick = new Joystick(1);
+		gyro = new Gyro(1);
+//		I2C* i = new I2C()
 		logger = new Logger(FINE, "RevereBot");
 		driver = new Driver(1, 2);
-		controller = new RobotController(logger, driver, new Joystick(1));
-//		timer = new Timer();
+		auxDrive = new AuxDrive(joystick);
+		controller = new RobotController(logger, driver, auxDrive, joystick);
 		ResetTick();
 
 		//	Set update period to sync with robot control packets (20ms nominal)
-		SetPeriod(0);
+		if (USE_SYNC_TICK) {
+			SetPeriod(0.0);
+		} else {
+			SetPeriod(TICK_LENGTH_SEC);
+		}
+
 	}
 
 	/**
@@ -52,8 +65,8 @@ public:
 	void RevereRobot::DisabledInit() {
 		logger->Info("Disabled mode init.");
 		driver->Stop();
-//		driver->SetDisabled(true);
 		driver->SetSafetyEnabled(true);
+		auxDrive->Stop();
 		ResetTick();
 		logger->Info("Finished disabled mode init.");
 	}
@@ -72,8 +85,8 @@ public:
 	void RevereRobot::AutonomousInit() {
 		logger->Info("Auton mode init.");
 		driver->Stop();
-//		driver->SetDisabled(false);
 		driver->SetSafetyEnabled(false);
+		auxDrive->Stop();
 		ResetTick();
 		logger->Info("Finished auton mode init.");
 	}
@@ -92,9 +105,9 @@ public:
 	void RevereRobot::TeleopInit() {
 		logger->Info("Teleop mode init.");
 		driver->Stop();
-//		driver->SetDisabled(false);
 		driver->SetSafetyEnabled(true);
 		driver->SetExpiration(0.5);
+		auxDrive->Stop();
 		ResetTick();
 		logger->Info("Finished teleop mode init.");
 	}
@@ -105,6 +118,10 @@ public:
 	void RevereRobot::TeleopPeriodic() {
 		OnTick();
 		controller->TeleopTick(modeTickCount);
+		auxDrive->TeleopTick(modeTickCount);
+		
+		SmartDashboard::PutNumber("GyroRate", gyro->GetRate());
+		SmartDashboard::PutNumber("GyroAngle", gyro->GetAngle());
 	}
 
 	/**
@@ -113,9 +130,9 @@ public:
 	void RevereRobot::TestInit() {
 		logger->Info("Test mode init.");
 		driver->Stop();
-//		driver->SetDisabled(false);
 		driver->SetSafetyEnabled(true);
 		driver->SetExpiration(0.5);
+		auxDrive->Stop();
 		ResetTick();
 		logger->Info("Finished test mode init.");
 	}
@@ -125,27 +142,6 @@ public:
 	 */
 	void RevereRobot::TestPeriodic() {
 		OnTick();
-		//	Temporary: Test motors same speed for 1 second
-		if (IsInRange(0.0, 1.0, TicksToSeconds(modeTickCount))) {
-			driver->Drive(0.25, 0.25);
-		}
-		//	Stop for 1 second
-		if (IsInRange(1.0, 2.0, TicksToSeconds(modeTickCount))) {
-			driver->Stop();
-		}
-		//	Then go backwards 1 second
-		else if (IsInRange(2.0, 3.0, TicksToSeconds(modeTickCount))) {
-			driver->Drive(-0.25, -0.25);
-		}
-		//	Then stop for another second
-		else if (IsInRange(4.0, 5.0, TicksToSeconds(modeTickCount))) {
-			driver->Stop();
-		}
-		//	Teleop
-//		else {
-//			//	Can't just call TeleopPeriodic(), will cause double-ticking!
-//			controller->TeleopTick();
-//		}
 
 	}
 
@@ -159,6 +155,34 @@ public:
 		//	16 bits would only give 65,535 ticks, or about 20 minutes of operation. 
 		modeTickCount++;
 
+		if (USE_SYNC_TICK) {
+			newData = true;
+		} else {
+			newData = m_ds->IsNewControlData();
+		}
+		if (newData) {
+			lastNewDataTick = modeTickCount;
+		} else {
+			//	Protect ourselves from trying to make a negative positive-only value.
+			if (modeTickCount < lastNewDataTick) {
+				//	Complain. We don't time travel.
+				logger->Fatal("WE'RE GOING BACK IN TIME NO NO NO.");
+				driver->Stop();
+				auxDrive->Stop();
+			} else {
+				unsigned int ticksSinceLastPacket = modeTickCount
+						- lastNewDataTick;
+				if (ticksSinceLastPacket > SecondsToTicks(1.0)
+						&& ticksSinceLastPacket % 5 == 0) {
+					logger->Warn(
+							StrFormat(
+									"Did not receive a new packet for %d seconds!",
+									TicksToSeconds(ticksSinceLastPacket)));
+					driver->Stop();
+					auxDrive->Stop();
+				}
+			}
+		}
 		m_watchdog.Feed();
 	}
 
@@ -168,13 +192,13 @@ public:
 			seconds *= -1.0;
 		}
 		//	   seconds->millis->ticks
-		return (unsigned int) (seconds * 1000.0 / TICK_LENGTH);
+		return (unsigned int) (seconds * 1000.0 / TICK_LENGTH_MS);
 	}
 
 	float RevereRobot::TicksToSeconds(unsigned int ticks) {
 		//	Ticks will always be negative! Yay!
 		//	   ticks->millis->seconds
-		return ticks * TICK_LENGTH / 1000.0;
+		return ticks * TICK_LENGTH_MS / 1000.0;
 	}
 
 	/**
@@ -182,9 +206,12 @@ public:
 	 */
 	void RevereRobot::ResetTick() {
 		modeTickCount = 0;
-//		timer->Stop();
-//		timer->Reset();
-//		timer->Start();
+		lastNewDataTick = 0;
+		newData = false;
+		gyro->Reset();
+		//		timer->Stop();
+		//		timer->Reset();
+		//		timer->Start();
 	}
 
 	/**
@@ -198,8 +225,8 @@ public:
 		driver = NULL;
 		delete logger;
 		logger = NULL;
-//		delete timer;
-//		timer = NULL;
+		delete auxDrive;
+		auxDrive = NULL;
 	}
 
 };

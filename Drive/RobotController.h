@@ -6,12 +6,11 @@
 class RobotController {
 	Driver* driver;
 	Joystick* joystick;
-	AuxDrive* auxDrive;
 	Logger* logger;
+	AuxDrive* auxDrive;
 	void Drive();
 	void TankSpin();
-	void Winch();
 public:
-	RobotController(Logger*, Driver*, Joystick*);
+	RobotController(Logger*, Driver*, AuxDrive*, Joystick*);
 	void TeleopTick(unsigned int);
 };

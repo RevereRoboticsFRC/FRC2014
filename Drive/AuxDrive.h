@@ -2,12 +2,17 @@
 
 class AuxDrive {
 	Jaguar* winchMotor;
+	DigitalInput* winchLimSwitchHigh;
+	DigitalInput* winchLimSwitchLow;
+	Joystick* joystick;
 	
 public:
-	AuxDrive();
+	AuxDrive(Joystick*);
 	
 	void WinchDrive(float);
 	void WinchStop();
 	
-	void Tick();
+	void TeleopTick(unsigned int);
+	
+	void Stop();
 };
