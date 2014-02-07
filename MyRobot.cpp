@@ -3,8 +3,11 @@
 #include "Utils/Logger.h"
 #include "Utils/RobotMath.h"
 #include "Drive/Driver.h"
+#include "task/TickTask.h"
+#include "task/WinchUpTickTask.cpp"
+#include "task/WinchDownTickTask.cpp"
 
-#define VERSION "1.01"
+#define VERSION "L'AQUEHJJJESHAA REHWERE 2.1"
 #define TEAM_NUMBER "Team 5249"
 static const float TICK_LENGTH_MS = 20.0;
 static const float TICK_LENGTH_SEC = 0.02;
@@ -19,8 +22,9 @@ class RevereRobot: public IterativeRobot {
 	Driver* driver;
 	AuxDrive* auxDrive;
 	Joystick* joystick;
-	Gyro* gyro;
-	
+
+	TickTask* currentTask;
+
 	unsigned int modeTickCount;
 	unsigned int lastNewDataTick;
 	bool newData;
@@ -28,8 +32,6 @@ class RevereRobot: public IterativeRobot {
 public:
 	RevereRobot() {
 		joystick = new Joystick(1);
-		gyro = new Gyro(1);
-//		I2C* i = new I2C()
 		logger = new Logger(FINE, "RevereBot");
 		driver = new Driver(1, 2);
 		auxDrive = new AuxDrive(joystick);
@@ -55,6 +57,7 @@ public:
 		logger->All(VERSION);
 		logger->All(__DATE__);
 		logger->All(__TIME__);
+		logger->All("Zac Wilson had no part in this.");
 		logger->All("=========================");
 		logger->Info("Finished global init.");
 	}
@@ -77,6 +80,8 @@ public:
 	 */
 	void RevereRobot::DisabledPeriodic() {
 		OnTick();
+		driver->Stop();
+		auxDrive->Stop();
 	}
 
 	/**
@@ -96,7 +101,7 @@ public:
 	 */
 	void RevereRobot::AutonomousPeriodic() {
 		OnTick();
-		driver->Drive(0.25, 0.25);
+
 	}
 
 	/**
@@ -119,9 +124,23 @@ public:
 		OnTick();
 		controller->TeleopTick(modeTickCount);
 		auxDrive->TeleopTick(modeTickCount);
-		
-		SmartDashboard::PutNumber("GyroRate", gyro->GetRate());
-		SmartDashboard::PutNumber("GyroAngle", gyro->GetAngle());
+		if (joystick->GetRawButton(5)) {
+			//	Lift up
+			//	Only task this if we don't have another task running
+			if (!(currentTask != NULL && !currentTask->isDone)) {
+				currentTask = new WinchUpTickTask(modeTickCount, auxDrive);
+			}
+		}
+		if (joystick->GetRawButton(3)) {
+			//	Go all the way down
+			//	Only task this if we don't have another task running
+			if (!(currentTask != NULL && !currentTask->isDone)) {
+				currentTask = new WinchDownTickTask(modeTickCount, auxDrive);
+			}
+		}
+		if (joystick->GetRawButton(12)) {
+			//	Go all the way up
+		}
 	}
 
 	/**
@@ -142,7 +161,10 @@ public:
 	 */
 	void RevereRobot::TestPeriodic() {
 		OnTick();
-
+		if (modeTickCount == 1) {
+			driver->Stop();
+			auxDrive->Stop();
+		}
 	}
 
 	/**
@@ -155,6 +177,13 @@ public:
 		//	16 bits would only give 65,535 ticks, or about 20 minutes of operation. 
 		modeTickCount++;
 
+		if (currentTask != NULL) {
+			currentTask->Tick();
+			if (currentTask->isDone) {
+				currentTask = NULL;
+			}
+		}
+
 		if (USE_SYNC_TICK) {
 			newData = true;
 		} else {
@@ -166,7 +195,7 @@ public:
 			//	Protect ourselves from trying to make a negative positive-only value.
 			if (modeTickCount < lastNewDataTick) {
 				//	Complain. We don't time travel.
-				logger->Fatal("WE'RE GOING BACK IN TIME NO NO NO.");
+				logger->Fatal("WE'RE GOING BACK IN TIME NO NO NO Y U DO DIS.");
 				driver->Stop();
 				auxDrive->Stop();
 			} else {
@@ -205,13 +234,12 @@ public:
 	 * Resets the tick system for the mode change. Should be called by all xxxInit() methods.
 	 */
 	void RevereRobot::ResetTick() {
+		if (currentTask != NULL) {
+			currentTask = NULL;
+		}
 		modeTickCount = 0;
 		lastNewDataTick = 0;
 		newData = false;
-		gyro->Reset();
-		//		timer->Stop();
-		//		timer->Reset();
-		//		timer->Start();
 	}
 
 	/**
@@ -227,6 +255,8 @@ public:
 		logger = NULL;
 		delete auxDrive;
 		auxDrive = NULL;
+		delete currentTask;
+		currentTask = NULL;
 	}
 
 };

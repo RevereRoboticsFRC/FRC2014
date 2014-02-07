@@ -18,13 +18,16 @@ AuxDrive::AuxDrive(Joystick* joy) {
 
 void AuxDrive::WinchDrive(float f) {
 	f = Clamp(-1.0, 1.0, f);
-	SmartDashboard::PutNumber("WinchSpd", -f);
 	bool switchHigh = winchLimSwitchHigh->Get();
 	bool switchLow = winchLimSwitchLow->Get();
 	SmartDashboard::PutBoolean("WinchLimSwitchHigh", switchHigh);
 	SmartDashboard::PutBoolean("WinchLimSwitchLow", switchLow);
-	
-	winchMotor->SetSpeed(f);
+	if ((switchHigh && f < 0.0) || (switchLow && f > 0.0)) {
+		winchMotor->StopMotor();
+	} else {
+		winchMotor->SetSpeed(f);
+	}
+	SmartDashboard::PutNumber("WinchSpeed", winchMotor->Get());
 }
 
 void AuxDrive::WinchStop() {
@@ -32,9 +35,7 @@ void AuxDrive::WinchStop() {
 }
 
 void AuxDrive::TeleopTick(unsigned int tickCount) {
-	if(joystick->GetRawButton(2)) {
-		WinchDrive(joystick->GetY(Joystick::kRightHand));
-	}
+	
 }
 
 void AuxDrive::Stop() {
