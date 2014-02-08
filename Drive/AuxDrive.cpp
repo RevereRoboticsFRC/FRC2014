@@ -11,8 +11,8 @@
 AuxDrive::AuxDrive(Joystick* joy) {
 	winchMotor = new Jaguar(3);
 	winchMotor->SetSafetyEnabled(false);
-	winchLimSwitchHigh = new DigitalInput(3);
-	winchLimSwitchLow = new DigitalInput(8);
+	winchLimSwitchHigh = new DigitalInput(1);
+	winchLimSwitchLow = new DigitalInput(2);
 	joystick = joy;
 }
 
