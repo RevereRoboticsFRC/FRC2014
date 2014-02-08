@@ -32,7 +32,7 @@ class RevereRobot: public IterativeRobot {
 public:
 	RevereRobot() {
 		joystick = new Joystick(1);
-		logger = new Logger(FINE, "RevereBot");
+		logger = new Logger(FINE, "L'AQUEHJJJESHAA");
 		driver = new Driver(1, 2);
 		auxDrive = new AuxDrive(joystick);
 		controller = new RobotController(logger, driver, auxDrive, joystick);
@@ -127,19 +127,25 @@ public:
 		if (joystick->GetRawButton(5)) {
 			//	Lift up
 			//	Only task this if we don't have another task running
-			if (!(currentTask != NULL && !currentTask->isDone)) {
-				currentTask = new WinchUpTickTask(modeTickCount, auxDrive);
-			}
+//			if (!(currentTask != NULL && !currentTask->isDone)) {
+				currentTask = new WinchUpTickTask(modeTickCount, auxDrive,
+						false);
+//			}
 		}
 		if (joystick->GetRawButton(3)) {
 			//	Go all the way down
 			//	Only task this if we don't have another task running
-			if (!(currentTask != NULL && !currentTask->isDone)) {
+//			if (!(currentTask != NULL && !currentTask->isDone)) {
 				currentTask = new WinchDownTickTask(modeTickCount, auxDrive);
-			}
+//			}
 		}
 		if (joystick->GetRawButton(12)) {
 			//	Go all the way up
+			//	Only task this if we don't have another task running
+//			if (!(currentTask != NULL && !currentTask->isDone)) {
+				currentTask
+						= new WinchUpTickTask(modeTickCount, auxDrive, true);
+//			}
 		}
 	}
 
