@@ -10,6 +10,7 @@ class WinchUpTickTask: public TickTask {
 public:
 	inline WinchUpTickTask(unsigned int, AuxDrive*, bool);
 	inline void Tick();
+	inline int GetId();
 	inline ~WinchUpTickTask();
 };
 
@@ -40,7 +41,7 @@ void WinchUpTickTask::Tick() {
 			return;
 		}
 	} else {
-		unsigned int len = 50; //	1000 ms
+		unsigned int len = 30; //	600 ms
 		if (tickCount < len) {
 			if (tickCount % 5) {
 				printf("Driving winch at -1.0 during tick %d\n", tickCount);

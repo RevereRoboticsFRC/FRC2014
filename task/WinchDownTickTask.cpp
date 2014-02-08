@@ -9,6 +9,7 @@ class WinchDownTickTask: public TickTask {
 public:
 	inline WinchDownTickTask(unsigned int, AuxDrive*);
 	inline void Tick();
+	inline int GetId();
 	inline ~WinchDownTickTask();
 };
 
