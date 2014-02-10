@@ -20,8 +20,8 @@ void AuxDrive::WinchDrive(float f) {
 	f = Clamp(-1.0, 1.0, f);
 	bool switchHigh = winchLimSwitchHigh->Get();
 	bool switchLow = winchLimSwitchLow->Get();
-	SmartDashboard::PutBoolean("WinchLimSwitchHigh", switchHigh);
-	SmartDashboard::PutBoolean("WinchLimSwitchLow", switchLow);
+	//	SmartDashboard::PutBoolean("WinchLimSwitchHigh", switchHigh);
+	//	SmartDashboard::PutBoolean("WinchLimSwitchLow", switchLow);
 	if ((switchHigh && f < 0.0) || (switchLow && f > 0.0)) {
 		winchMotor->StopMotor();
 	} else {
@@ -35,7 +35,10 @@ void AuxDrive::WinchStop() {
 }
 
 void AuxDrive::TeleopTick(unsigned int tickCount) {
-	
+	bool switchHigh = winchLimSwitchHigh->Get();
+	bool switchLow = winchLimSwitchLow->Get();
+	SmartDashboard::PutBoolean("WinchLimSwitchHigh", switchHigh);
+	SmartDashboard::PutBoolean("WinchLimSwitchLow", switchLow);
 }
 
 void AuxDrive::Stop() {
