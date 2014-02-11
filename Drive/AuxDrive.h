@@ -15,7 +15,7 @@ public:
 	void WinchDrive(float);
 	void WinchStop();
 
-	void TeleopTick(unsigned int);
+	void DebugTick(unsigned int);
 
 	void Stop();
 };

@@ -34,9 +34,9 @@ void WinchDownTickTask::Tick() {
 		isDone = true;
 	} else {
 		if (tickCount % 5) {
-			printf("Driving winch at +1.0 during tick %d\n", tickCount);
+			printf("Driving winch at +0.75 during tick %d\n", tickCount);
 		}
-		auxDrive->WinchDrive(1.0);
+		auxDrive->WinchDrive(0.75);
 	}
 }
 

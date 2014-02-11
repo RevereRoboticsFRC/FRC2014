@@ -123,8 +123,7 @@ public:
 	void RevereRobot::TeleopPeriodic() {
 		OnTick();
 		controller->TeleopTick(modeTickCount);
-		auxDrive->TeleopTick(modeTickCount);
-		if (joystick->GetRawButton(5)) {
+		if (joystick->GetRawButton(1)) {
 			//	Lift up
 			//	Only task this if we don't have another task running
 //			if (!(currentTask != NULL && !currentTask->isDone)) {
@@ -132,7 +131,7 @@ public:
 						false);
 //			}
 		}
-		if (joystick->GetRawButton(3)) {
+		if (joystick->GetRawButton(2)) {
 			//	Go all the way down
 			//	Only task this if we don't have another task running
 //			if (!(currentTask != NULL && !currentTask->isDone)) {
@@ -183,6 +182,8 @@ public:
 		//	16 bits would only give 65,535 ticks, or about 20 minutes of operation. 
 		modeTickCount++;
 
+		auxDrive->DebugTick(modeTickCount);
+		
 		if (currentTask != NULL) {
 			currentTask->Tick();
 			if (currentTask->isDone) {

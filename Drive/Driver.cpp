@@ -18,8 +18,8 @@ void Driver::Drive(float rightSpeed, float leftSpeed) {
 	leftSpeed = Clamp(-1.0, 1.0, leftSpeed);
 	SmartDashboard::PutNumber("motorSpdLeft", rightSpeed);
 	SmartDashboard::PutNumber("motorSpdRight", leftSpeed);
-	m_rightMotor->SetSpeed(-rightSpeed);
-	m_leftMotor->SetSpeed(leftSpeed);
+	m_rightMotor->SetSpeed(rightSpeed);
+	m_leftMotor->SetSpeed(-leftSpeed);
 }
 
 void Driver::Stop() {

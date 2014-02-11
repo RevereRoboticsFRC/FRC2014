@@ -76,7 +76,7 @@ void RobotController::Drive() {
 	SmartDashboard::PutNumber("CntrlDirectionAdj", directionDeg);
 
 	//	Joystick returns trig-correct values, no need to correct them
-	float directionRads = directionDeg * PI / 180.0;
+	float directionRads = directionDeg * PI / -180.0;
 
 	//	Temporary 0.32 to compensate for motor startup
 	float magnitude = joystick->GetMagnitude();

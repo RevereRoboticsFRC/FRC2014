@@ -36,12 +36,12 @@ void WinchUpTickTask::Tick() {
 	//	Temporary for now
 	if (fullUp) {
 		if(!auxDrive->winchLimSwitchHigh->Get()) {
-			printf("Driving winch full up at -1.0 during tick %d\n", tickCount);
-			auxDrive->WinchDrive(-1.0);
+			printf("Driving winch full up at -0.75 during tick %d\n", tickCount);
+			auxDrive->WinchDrive(-0.5);
 			return;
 		}
 	} else {
-		unsigned int len = 30; //	600 ms
+		unsigned int len = 20; //	400 ms
 		if (tickCount < len) {
 			if (tickCount % 5) {
 				printf("Driving winch at -1.0 during tick %d\n", tickCount);
