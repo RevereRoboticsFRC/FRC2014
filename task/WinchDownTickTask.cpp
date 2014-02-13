@@ -6,20 +6,24 @@
 
 class WinchDownTickTask: public TickTask {
 	AuxDrive* auxDrive;
+	bool fullDown;
 public:
-	inline WinchDownTickTask(unsigned int, AuxDrive*);
+	inline WinchDownTickTask(unsigned int, AuxDrive*, bool);
 	inline void Tick();
 	inline int GetId();
 	inline ~WinchDownTickTask();
 };
 
-WinchDownTickTask::WinchDownTickTask(unsigned int i, AuxDrive* ad) :
+WinchDownTickTask::WinchDownTickTask(unsigned int i, AuxDrive* ad, bool fd) :
 	TickTask(i) {
 	startTick = i;
 	tickCount = 0;
 	auxDrive = ad;
+	fullDown = fd;
 	printf("WinchDownTickTask Constructor\n");
-	printf("DOOOOOWWNNNNN!!!\n");
+	if (fullDown) {
+		printf("DOOOOOWWNNNNN!!!\n");
+	}
 }
 
 void WinchDownTickTask::Tick() {
@@ -33,10 +37,24 @@ void WinchDownTickTask::Tick() {
 		auxDrive->WinchStop();
 		isDone = true;
 	} else {
-		if (tickCount % 5) {
-			printf("Driving winch at +0.75 during tick %d\n", tickCount);
+		if (fullDown) {
+			if (tickCount % 5) {
+				printf("Driving winch at +0.75 during tick %d\n", tickCount);
+			}
+			auxDrive->WinchDrive(0.75);
+		} else {
+			unsigned int len = 20; //	400 ms
+			if (tickCount < len) {
+				if (tickCount % 5) {
+					printf("Driving winch at +1.0 during tick %d\n", tickCount);
+				}
+				auxDrive->WinchDrive(+1.0);
+			} else {
+				printf("Stopping winch at tick %d\n", tickCount);
+				auxDrive->WinchStop();
+				isDone = true;
+			}
 		}
-		auxDrive->WinchDrive(0.75);
 	}
 }
 

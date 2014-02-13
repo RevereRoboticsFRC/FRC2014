@@ -123,28 +123,33 @@ public:
 	void RevereRobot::TeleopPeriodic() {
 		OnTick();
 		controller->TeleopTick(modeTickCount);
-		if (joystick->GetRawButton(1)) {
-			//	Lift up
-			//	Only task this if we don't have another task running
-//			if (!(currentTask != NULL && !currentTask->isDone)) {
-				currentTask = new WinchUpTickTask(modeTickCount, auxDrive,
-						false);
-//			}
-		}
-		if (joystick->GetRawButton(2)) {
-			//	Go all the way down
-			//	Only task this if we don't have another task running
-//			if (!(currentTask != NULL && !currentTask->isDone)) {
-				currentTask = new WinchDownTickTask(modeTickCount, auxDrive);
-//			}
-		}
 		if (joystick->GetRawButton(12)) {
+			//	Lift up one step
+			//	Only task this if we don't have another task running
+			//			if (!(currentTask != NULL && !currentTask->isDone)) {
+			currentTask = new WinchUpTickTask(modeTickCount, auxDrive, false);
+			//			}
+		}
+		if (joystick->GetRawButton(11)) {
+			//	Drop down one step
+			//	Only task this if we don't have another task running
+			//			if (!(currentTask != NULL && !currentTask->isDone)) {
+			currentTask = new WinchDownTickTask(modeTickCount, auxDrive, false);
+			//			}
+		}
+		if (joystick->GetRawButton(10)) {
 			//	Go all the way up
 			//	Only task this if we don't have another task running
-//			if (!(currentTask != NULL && !currentTask->isDone)) {
-				currentTask
-						= new WinchUpTickTask(modeTickCount, auxDrive, true);
-//			}
+			//			if (!(currentTask != NULL && !currentTask->isDone)) {
+			currentTask = new WinchUpTickTask(modeTickCount, auxDrive, true);
+			//			}
+		}
+		if (joystick->GetRawButton(9)) {
+			//	All the way down
+			//	Only task this if we don't have another task running
+			//			if (!(currentTask != NULL && !currentTask->isDone)) {
+			currentTask = new WinchDownTickTask(modeTickCount, auxDrive, true);
+			//			}
 		}
 	}
 
@@ -183,7 +188,7 @@ public:
 		modeTickCount++;
 
 		auxDrive->DebugTick(modeTickCount);
-		
+
 		if (currentTask != NULL) {
 			currentTask->Tick();
 			if (currentTask->isDone) {

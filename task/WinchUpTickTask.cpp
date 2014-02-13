@@ -33,13 +33,17 @@ void WinchUpTickTask::Tick() {
 		printf("Finished on tick %d\n", tickCount);
 		return;
 	}
+	if (auxDrive->winchLimSwitchHigh->Get()) {
+		printf("Stopping winch at tick %d\n", tickCount);
+		auxDrive->WinchStop();
+		isDone = true;
+		return;
+	}
 	//	Temporary for now
 	if (fullUp) {
-		if(!auxDrive->winchLimSwitchHigh->Get()) {
-			printf("Driving winch full up at -0.75 during tick %d\n", tickCount);
-			auxDrive->WinchDrive(-0.5);
-			return;
-		}
+		printf("Driving winch full up at -0.75 during tick %d\n", tickCount);
+		auxDrive->WinchDrive(-0.5);
+		return;
 	} else {
 		unsigned int len = 20; //	400 ms
 		if (tickCount < len) {
@@ -48,11 +52,13 @@ void WinchUpTickTask::Tick() {
 			}
 			auxDrive->WinchDrive(-1.0);
 			return;
+		} else {
+			printf("Stopping winch at tick %d\n", tickCount);
+			auxDrive->WinchStop();
+			isDone = true;
+			return;
 		}
 	}
-	printf("Stopping winch at tick %d\n", tickCount);
-	auxDrive->WinchStop();
-	isDone = true;
 }
 
 int WinchUpTickTask::GetId() {
