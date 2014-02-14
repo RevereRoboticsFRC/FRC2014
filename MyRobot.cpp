@@ -123,15 +123,26 @@ public:
 	void RevereRobot::TeleopPeriodic() {
 		OnTick();
 		controller->TeleopTick(modeTickCount);
+<<<<<<< HEAD
 		if (joystick->GetRawButton(12)) {
 			//	Lift up one step
+=======
+		auxDrive->TeleopTick(modeTickCount);
+		if (joystick->GetRawButton(1)) {
+			//	Lift up
+>>>>>>> 518f0d8c4364f0b96190d45bcc827e46d6224afc
 			//	Only task this if we don't have another task running
 			//			if (!(currentTask != NULL && !currentTask->isDone)) {
 			currentTask = new WinchUpTickTask(modeTickCount, auxDrive, false);
 			//			}
 		}
+<<<<<<< HEAD
 		if (joystick->GetRawButton(11)) {
 			//	Drop down one step
+=======
+		if (joystick->GetRawButton(2)) {
+			//	Go all the way down
+>>>>>>> 518f0d8c4364f0b96190d45bcc827e46d6224afc
 			//	Only task this if we don't have another task running
 			//			if (!(currentTask != NULL && !currentTask->isDone)) {
 			currentTask = new WinchDownTickTask(modeTickCount, auxDrive, false);
