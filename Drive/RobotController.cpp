@@ -47,10 +47,10 @@ void RobotController::Drive() {
 		directionDeg = directionDeg / ANGLE_THRESH * 45.0;
 	} else if (abs(directionDeg) < (180.0 - ANGLE_THRESH)) {
 		//	Close to 90
-		if (IsInRange(88, 92, abs(directionDeg))) {
-//			printf("TankSpin\n");
-			TankSpin();
-		} else {
+//		if (IsInRange(89, 91, abs(directionDeg))) {
+////			printf("TankSpin\n");
+//			Spin();
+//		} else {
 //			printf("MedDirection %f\n", directionDeg);
 			//	-100 to -80 or +100 to +80
 			//	Remap 80 to 100 to 45 to 135
@@ -59,7 +59,7 @@ void RobotController::Drive() {
 			} else {
 				directionDeg = (directionDeg + 80) / 20.0 * 90.0 - 45.0;
 			}
-		}
+//		}
 	} else {
 		//	-180 to -100 or +180 to +100
 		//	Remap 100 to 180 to 135 to 180
@@ -87,7 +87,7 @@ void RobotController::Drive() {
 	//	1.5 power magnitude for better "feels" at low speeds
 	magnitude = pow(Clamp(0.0, 1.0, magnitude), 1.5);
 
-	float x = cos(directionRads) * magnitude;
+	float x = cos(directionRads) * -magnitude;
 	float y = sin(directionRads) * magnitude;
 
 	float u = (1 - abs(x)) * y + y;
