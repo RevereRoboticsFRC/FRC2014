@@ -1,48 +1,45 @@
 #include "Driver.h"
 #include "../Utils/RobotMath.h"
 
-Driver::Driver(int leftPort, int rightPort) {
+Driver::Driver(int rightPortNum, int leftPortNum) {
 	disabled = false;
-	leftMotor = new Victor(leftPort);
-	rightMotor = new Victor(rightPort);
+	m_rightMotor = new Victor(rightPortNum);
+	m_leftMotor = new Victor(leftPortNum);
 	
 }
 
-void Driver::Drive(float left, float right) {
+void Driver::Drive(float rightSpeed, float leftSpeed) {
 	if(disabled) {
-		leftMotor->StopMotor();
-		rightMotor->StopMotor();
+		m_rightMotor->StopMotor();
+		m_leftMotor->StopMotor();
 		return;
 	}
-	leftMotor->SetSpeed(Clamp(-1.0, 1.0, left));
-	rightMotor->SetSpeed(Clamp(-1.0, 1.0, right));
+	rightSpeed = Clamp(-1.0, 1.0, rightSpeed);
+	leftSpeed = Clamp(-1.0, 1.0, leftSpeed);
+	SmartDashboard::PutNumber("motorSpdLeft", rightSpeed);
+	SmartDashboard::PutNumber("motorSpdRight", leftSpeed);
+	m_rightMotor->SetSpeed(rightSpeed);
+	m_leftMotor->SetSpeed(-leftSpeed);
 }
 
 void Driver::Stop() {
-	leftMotor->StopMotor();
-	rightMotor->StopMotor();
+	m_rightMotor->StopMotor();
+	m_leftMotor->StopMotor();
 }
 
 void Driver::SetSafetyEnabled(bool enabled) {
-	leftMotor->SetSafetyEnabled(enabled);
-	rightMotor->SetSafetyEnabled(enabled);
+	m_rightMotor->SetSafetyEnabled(enabled);
+	m_leftMotor->SetSafetyEnabled(enabled);
 }
 bool Driver::IsSafetyEnabled() {
-	return leftMotor->IsSafetyEnabled() && rightMotor->IsSafetyEnabled();
-}
-
-void Driver::SetDisabled(bool b) {
-	disabled = b;
-}
-bool Driver::IsDisabled() {
-	return disabled;
+	return m_rightMotor->IsSafetyEnabled() && m_leftMotor->IsSafetyEnabled();
 }
 
 void Driver::SetExpiration(float f) {
-	leftMotor->SetExpiration(f);
-	rightMotor->SetExpiration(f);
+	m_rightMotor->SetExpiration(f);
+	m_leftMotor->SetExpiration(f);
 }
 
 float Driver::GetExpiration() {
-	return leftMotor->GetExpiration();
+	return m_rightMotor->GetExpiration();
 }
